@@ -18,12 +18,8 @@ public class AutomataCSS extends Automata {
     }
 
     @Override
-    public ResultadoAutomata generarTokens() {
-        ArrayList<Token> tokens = new ArrayList<>();
-        
-        
-        
-        return new ResultadoAutomata(tokens, posicion);
+    public ArrayList<Token> generarTokens() {
+        return null;
     }
-    
+
 }

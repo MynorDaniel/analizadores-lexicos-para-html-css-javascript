@@ -15,108 +15,90 @@ public class AutomataHTML extends Automata {
 
     public AutomataHTML(String input) {
         super(input);
+        this.posicion = 8;
     }
 
     @Override
-    public ResultadoAutomata generarTokens() {
+    public ArrayList<Token> generarTokens() {
+        
         ArrayList<Token> tokens = new ArrayList<>();
         StringBuilder buffer = new StringBuilder();
         
-        while (posicion < input.length()) {
+        while(posicion < input.length()){
             char c = input.charAt(posicion);
             
+            if(c == '<' && !estado.equals("q3")){
+                errores.add(new Token("ERROR", buffer.toString()));
+                buffer.setLength(0);
+            }else if(c == '<' && buffer.length() > 0){
+                tokens.add(new Token("TEXTO", buffer.toString()));
+                buffer.setLength(0);
+                estado = "q0";
+            }
+            
+            buffer.append(c);
             
             switch(estado){
                 case "q0" -> {
-                    if(cambioDeEstado(buffer.toString())){
-                        break;
-                    }
-                    
-                    if(c == ' '){
-                        estado = "q0";
-                    }else if(c == '<'){
-                        tokens.add(new Token("APERTURA", "<", posicion));
+                    if(buffer.toString().endsWith("<")){
                         estado = "q1";
+                        tokens.add(new Token("APERTURA", "<"));
+                        buffer.setLength(0);
                     }
-                    
-                    posicion++;
                 }
                 case "q1" -> {
-                    if(cambioDeEstado(buffer.toString())){
-                        break;
-                    }
-                    
-                    if(c == ' '){
-                        estado = "q1";
-                    }else if(esPalabraReservada(buffer.toString())){
-                        tokens.add(new Token("PALABRA_RESERVADA", buffer.toString(), posicion));
-                        buffer.setLength(0);
+                    if(esNombreEtiqueta(buffer.toString().trim())){
                         estado = "q2";
-                    }else if((c >= 'a' && c <= 'z') || (c >= '1' && c <= '6')){
-                        buffer.append(c);
+                        tokens.add(new Token("NOMBRE_ETIQUETA", buffer.toString().trim()));
+                        buffer.setLength(0);
                     }
-                    
-                    posicion++;
                 }
                 case "q2" -> {
-                    if(cambioDeEstado(buffer.toString())){
-                        break;
-                    }
-                    
-                    if(c == ' '){
-                        estado = "q5";
-                    }else if(c == '>'){
+                    if(buffer.toString().endsWith(">")){
                         estado = "q3";
-                        tokens.add(new Token("CIERRE", ">", posicion));
-                    }else if(c == '/'){
+                        tokens.add(new Token("CIERRE", ">"));
+                        buffer.setLength(0);
+                    }else if(buffer.toString().endsWith("/")){
                         estado = "q4";
-                        tokens.add(new Token("BARRA", "/", posicion));
-                    }else{
-                        estado = "error";
-                    }
-                    
-                    posicion++;
-                }
-                case "q3" -> {
-                    if(cambioDeEstado(buffer.toString())){
-                        break;
+                        tokens.add(new Token("BARRA", "/"));
+                        buffer.setLength(0);
+                    }else if(esPalabraReservada(buffer.toString().trim())){
+                        estado = "q6";
+                        tokens.add(new Token("PALABRA_RESERVADA", buffer.toString().trim()));
+                        buffer.setLength(0);
                     }
                 }
                 case "q4" -> {
-                    if(cambioDeEstado(buffer.toString())){
-                        break;
+                    if(buffer.toString().endsWith(">")){
+                        estado = "q3";
+                        tokens.add(new Token("CIERRE", ">"));
+                        buffer.setLength(0);
                     }
-                }
-                case "q5" -> {
-                    if(cambioDeEstado(buffer.toString())){
-                        break;
-                    }
+                    
                 }
                 case "q6" -> {
-                    if(cambioDeEstado(buffer.toString())){
-                        break;
+                    if(buffer.toString().endsWith("=")){
+                        estado = "q7";
+                        tokens.add(new Token("IGUAL", "="));
+                        buffer.setLength(0);
                     }
                 }
                 case "q7" -> {
-                    if(cambioDeEstado(buffer.toString())){
-                        break;
+                    if(esCadena(buffer.toString().trim())){
+                        estado = "q2";
+                        tokens.add(new Token("CADENA", buffer.toString().trim()));
+                        buffer.setLength(0);
                     }
-                }
-                case "q8" -> {
-                    if(cambioDeEstado(buffer.toString())){
-                        break;
-                    }
-                }
-                case "error" -> {
-                    if(cambioDeEstado(buffer.toString())){
-                        break;
-                    }
+                    
                 }
             }
+            
+            posicion++;
         }
-        
-        return new ResultadoAutomata(tokens, posicion - buffer.length());
+         
+        return tokens;
     }
+
     
     
     

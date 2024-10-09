@@ -4,7 +4,9 @@
  */
 package com.mycompany.analizadoreslexicos.backend.automatas;
 
-import com.mycompany.analizadoreslexicos.backend.enums.NombreEtiqueta;
+import com.mycompany.analizadoreslexicos.backend.Token;
+import com.mycompany.analizadoreslexicos.backend.enums.*;
+import java.util.ArrayList;
 
 /**
  *
@@ -14,20 +16,17 @@ public abstract class Automata {
     protected String input;
     protected int posicion;
     protected String estado;
+    protected ArrayList<Token> errores;
 
     public Automata(String input) {
-        this.input = input;
-        this.posicion = 0;
+        this.input = input.trim();
         this.estado = "q0";
+        this.errores = new ArrayList<>();
     }
 
-    public abstract ResultadoAutomata generarTokens();
+    public abstract ArrayList<Token> generarTokens();
     
-    protected boolean cambioDeEstado(String buffer){
-        return buffer.equals(">>[css]") || buffer.equals(">>[js]") || buffer.equals(">>[html]");
-    }
-    
-    protected boolean esPalabraReservada(String palabra) {
+    protected boolean esNombreEtiqueta(String palabra){
         try {
             NombreEtiqueta.valueOf(palabra.toUpperCase());
             return true;
@@ -35,4 +34,21 @@ public abstract class Automata {
             return false;
         }
     }
+    
+    protected boolean esPalabraReservada(String palabra) {
+        try {
+            PalabraReservadaHTML.valueOf(palabra.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+    
+    protected boolean esCadena(String palabra) {
+        if (palabra != null && palabra.length() >= 2) {
+            return palabra.startsWith("\"") && palabra.endsWith("\"");
+        }
+        return false;
+    }
+
 }

@@ -5,9 +5,11 @@
 package com.mycompany.analizadoreslexicos.frontend;
 
 import com.mycompany.analizadoreslexicos.Lexer;
+import com.mycompany.analizadoreslexicos.backend.Token;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -125,8 +127,25 @@ public class FramePrincipal extends javax.swing.JFrame {
     private void ejecutarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ejecutarBtnActionPerformed
         Lexer lexer = new Lexer(jTextArea1.getText());
         lexer.generarTokens();
+        ArrayList<Token> tokensHTML = lexer.getTokensHTML();
+        ArrayList<Token> tokensCSS = lexer.getTokensCSS();
+        ArrayList<Token> tokensJS = lexer.getTokensJS();
+      
+        imprimirTokens(tokensHTML, tokensCSS, tokensJS);
     }//GEN-LAST:event_ejecutarBtnActionPerformed
 
+    private void imprimirTokens(ArrayList<Token> tokensHTML, ArrayList<Token> tokensCSS, ArrayList<Token> tokensJS){
+        for (int i = 0; i < tokensHTML.size(); i++) {
+            System.out.println("Token html " + i + ":" + tokensHTML.get(i).toString());
+        }
+        for (int i = 0; i < tokensCSS.size(); i++) {
+            System.out.println("Token css " + i + ":" + tokensCSS.get(i).toString());
+        }
+        for (int i = 0; i < tokensJS.size(); i++) {
+            System.out.println("Token js " + i + ":" + tokensJS.get(i).toString());
+        }
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu archivoBtn;
     private javax.swing.JButton ejecutarBtn;

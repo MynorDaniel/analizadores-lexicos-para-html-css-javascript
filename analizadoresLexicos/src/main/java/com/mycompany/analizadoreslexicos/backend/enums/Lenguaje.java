@@ -8,6 +8,19 @@ package com.mycompany.analizadoreslexicos.backend.enums;
  *
  * @author mynordma
  */
-public enum PalabraReservada {
+public enum Lenguaje {
     
+    HTML(">>[html]"),
+    CSS(">>[css]"),
+    JS(">>[js]");
+
+    private final String token;
+
+    Lenguaje(String token) {
+        this.token = token;
+    }
+    
+    public String getToken() {
+        return token;
+    }
 }

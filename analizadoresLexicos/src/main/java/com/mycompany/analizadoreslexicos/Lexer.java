@@ -6,7 +6,6 @@ package com.mycompany.analizadoreslexicos;
 
 import com.mycompany.analizadoreslexicos.backend.Token;
 import com.mycompany.analizadoreslexicos.backend.automatas.*;
-import com.mycompany.analizadoreslexicos.backend.enums.EstadoEnum;
 import java.util.ArrayList;
 
 /**
@@ -16,81 +15,79 @@ import java.util.ArrayList;
 public class Lexer {
     
     private final String input;
-    private int posicionActual;
-    private EstadoEnum lenguajeActual;
-    private ArrayList<Token> tokens;
+    private final ArrayList<Token> tokensHTML;
+    private final ArrayList<Token> tokensCSS;
+    private final ArrayList<Token> tokensJS;
 
     public Lexer(String input) {
-        this.input = input;
-        this.posicionActual = 0;
-        this.lenguajeActual = null;
-        this.tokens = new ArrayList<>();
+        this.input = input.trim();
+        this.tokensHTML = new ArrayList<>();
+        this.tokensCSS = new ArrayList<>();
+        this.tokensJS = new ArrayList<>();
     }
     
     public void generarTokens(){
-        while (posicionActual < input.length()) {
-            if (esTokenDeEstado()) {
-                cambiarLenguaje();
-            } else {
-                // Si ya hay un lexer activo, tokeniza con el lexer actual
-                if (lenguajeActual != null) {
-                    tokens.addAll(usarAutomataActual());
-                } else {
-                    posicionActual++;
+        ArrayList<String> inputs = separarInput(input);
+        for (String inputSeparado : inputs) {
+            if(inputSeparado.startsWith(">>[html]")){
+                AutomataHTML automata = new AutomataHTML(inputSeparado);
+                tokensHTML.addAll(automata.generarTokens());
+            }else if(inputSeparado.startsWith(">>[css]")){
+                AutomataCSS automata = new AutomataCSS(inputSeparado);
+                tokensHTML.addAll(automata.generarTokens());
+            }else if(inputSeparado.startsWith(">>[js]")){
+                AutomataJS automata = new AutomataJS(inputSeparado);
+                tokensHTML.addAll(automata.generarTokens());
+            }else{
+                System.out.println("Error");
+            }
+        }
+    }
+    
+    private ArrayList<String> separarInput(String texto){
+        String[] palabrasEspeciales = {">>[html]", ">>[css]", ">>[js]"};
+        ArrayList<String> partesSeparadas = new ArrayList<>();
+
+        StringBuilder parteActual = new StringBuilder();
+        String palabraActual = null;
+
+        String[] lineas = texto.split("\n");
+
+        for (String linea : lineas) {
+            for (String palabraEspecial : palabrasEspeciales) {
+                if (linea.startsWith(palabraEspecial)) {
+                    if (parteActual.length() > 0) {
+                        partesSeparadas.add(parteActual.toString().trim());
+                    }
+                    parteActual = new StringBuilder();
+                    palabraActual = palabraEspecial;
+                    parteActual.append(linea).append("\n");
+                    break;
                 }
             }
+            if (palabraActual != null && !linea.startsWith(palabraActual)) {
+                parteActual.append(linea).append("\n");
+            }
         }
+
+        if (parteActual.length() > 0) {
+            partesSeparadas.add(parteActual.toString().trim());
+        }
+
+        return partesSeparadas;
     }
+
+    public ArrayList<Token> getTokensHTML() {
+        return tokensHTML;
+    }
+
+    public ArrayList<Token> getTokensCSS() {
+        return tokensCSS;
+    }
+
+    public ArrayList<Token> getTokensJS() {
+        return tokensJS;
+    }
+
     
-    private boolean esTokenDeEstado() {
-        return input.startsWith(">>[html]", posicionActual) ||
-               input.startsWith(">>[css]", posicionActual) ||
-               input.startsWith(">>[js]", posicionActual);
-    }
-     
-    private void cambiarLenguaje() {
-        if (input.startsWith(">>[html]", posicionActual)) {
-            lenguajeActual = EstadoEnum.HTML;
-            posicionActual += ">>[html]".length();
-        } else if (input.startsWith(">>[css]", posicionActual)) {
-            lenguajeActual = EstadoEnum.CSS;
-            posicionActual += ">>[css]".length();
-        } else if (input.startsWith(">>[js]", posicionActual)) {
-            lenguajeActual = EstadoEnum.JS;
-            posicionActual += ">>[js]".length();
-        }
-    }
-    
-    private ArrayList<Token> usarAutomataActual() {
-        String inputSobrante = input.substring(posicionActual);
-        ArrayList<Token> tokensGenerados = new ArrayList<>();
-        int posicionAvanzada = posicionActual;
-
-        switch (lenguajeActual) {
-            case HTML -> {
-                AutomataHTML htmlLexer = new AutomataHTML(inputSobrante);
-                ResultadoAutomata htmlResultado = htmlLexer.generarTokens();
-                tokensGenerados = htmlResultado.getTokens();
-                posicionAvanzada += htmlResultado.getNuevaPosicion();
-            }
-
-            case CSS -> {
-                AutomataCSS cssLexer = new AutomataCSS(inputSobrante);
-                ResultadoAutomata cssResultado = cssLexer.generarTokens();
-                tokensGenerados = cssResultado.getTokens();
-                posicionAvanzada += cssResultado.getNuevaPosicion();
-            }
-
-            case JS -> {
-                AutomataJS jsLexer = new AutomataJS(inputSobrante);
-                ResultadoAutomata jsResultado = jsLexer.generarTokens();
-                tokensGenerados = jsResultado.getTokens();
-                posicionAvanzada += jsResultado.getNuevaPosicion();
-            }
-        }
-        
-        posicionActual = posicionAvanzada;
-        
-        return tokensGenerados;
-    }
 }

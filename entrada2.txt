@@ -1,0 +1,62 @@
+>>[html]
+<!DOCTYPE html>
+
+>>[css]
+body {
+    font-family: Arial, sans-serif;
+
+}
+>>[js]
+document.addEventListener('DOMContentLoaded', function() {
+>>[html]
+<!DOCTYPE html>
+
+>>[css]
+body {
+    font-family: Arial, sans-serif;
+
+}
+>>[js]
+document.addEventListener('DOMContentLoaded', function() {
+>>[html]
+<!DOCTYPE html>
+
+>>[css]
+body {
+    font-family: Arial, sans-serif;
+
+}
+>>[js]
+document.addEventListener('DOMContentLoaded', function() {
+>>[html]
+<!DOCTYPE html>
+
+>>[css]
+body {
+    font-family: Arial, sans-serif;
+
+}
+>>[js]
+document.addEventListener('DOMContentLoaded', function() {
+>>[html]
+<!DOCTYPE html>
+
+>>[css]
+body {
+    font-family: Arial, sans-serif;
+
+}
+>>[js]
+document.addEventListener('DOMContentLoaded', function() {
+>>[html]
+<!DOCTYPE html>
+
+>>[css]
+body {
+    font-family: Arial, sans-serif;
+
+}
+>>[js]
+document.addEventListener('DOMContentLoaded', function() {
+
+
