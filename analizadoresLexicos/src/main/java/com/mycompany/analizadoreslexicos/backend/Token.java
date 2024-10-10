@@ -12,6 +12,7 @@ public class Token {
     private String tipo;
     private String valor;
     private String traduccion;
+    private String lenguaje;
 
     public Token(String tipo, String valor, String traduccion) {
         this.tipo = tipo;
@@ -22,6 +23,15 @@ public class Token {
     public String getTipo() {
         return tipo;
     }
+
+    public String getLenguaje() {
+        return lenguaje;
+    }
+
+    public void setLenguaje(String lenguaje) {
+        this.lenguaje = lenguaje;
+    }
+    
 
     public void setTipo(String tipo) {
         this.tipo = tipo;

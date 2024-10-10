@@ -6,6 +6,7 @@ package com.mycompany.analizadoreslexicos.frontend;
 
 import com.mycompany.analizadoreslexicos.Lexer;
 import com.mycompany.analizadoreslexicos.backend.GeneradorHTML;
+import com.mycompany.analizadoreslexicos.backend.Reporte;
 import com.mycompany.analizadoreslexicos.backend.Token;
 import java.io.File;
 import java.nio.file.Files;
@@ -152,12 +153,15 @@ public class FramePrincipal extends javax.swing.JFrame {
         tokensHTML = lexer.getTokensHTML();
         tokensCSS = lexer.getTokensCSS();
         tokensJS = lexer.getTokensJS();
+        
+        asignarLenguajes(tokensHTML, tokensCSS, tokensJS);
       
         imprimirTokens(tokensHTML, tokensCSS, tokensJS);
     }//GEN-LAST:event_ejecutarBtnActionPerformed
 
     private void reporteBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reporteBtnMouseClicked
-        // TODO add your handling code here:
+        Reporte reporte = new Reporte();
+        reporte.generarReporte(tokensHTML, tokensCSS, tokensJS);
     }//GEN-LAST:event_reporteBtnMouseClicked
 
     private void generarHTMLBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_generarHTMLBtnMouseClicked
@@ -227,6 +231,18 @@ public class FramePrincipal extends javax.swing.JFrame {
         }
         for (int i = 0; i < tokensJS.size(); i++) {
             System.out.println("Token js " + i + ":" + tokensJS.get(i).toString());
+        }
+    }
+    
+    private void asignarLenguajes(ArrayList<Token> tokensHTML, ArrayList<Token> tokensCSS, ArrayList<Token> tokensJS){
+        for (int i = 0; i < tokensHTML.size(); i++) {
+            tokensHTML.get(i).setLenguaje("HTML");
+        }
+        for (int i = 0; i < tokensCSS.size(); i++) {
+            tokensCSS.get(i).setLenguaje("CSS");
+        }
+        for (int i = 0; i < tokensJS.size(); i++) {
+            tokensJS.get(i).setLenguaje("JS");
         }
     }
     
