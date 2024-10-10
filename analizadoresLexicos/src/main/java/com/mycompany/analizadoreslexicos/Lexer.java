@@ -34,10 +34,10 @@ public class Lexer {
                 tokensHTML.addAll(automata.generarTokens());
             }else if(inputSeparado.startsWith(">>[css]")){
                 AutomataCSS automata = new AutomataCSS(inputSeparado);
-                tokensHTML.addAll(automata.generarTokens());
+                tokensCSS.addAll(automata.generarTokens());
             }else if(inputSeparado.startsWith(">>[js]")){
                 AutomataJS automata = new AutomataJS(inputSeparado);
-                tokensHTML.addAll(automata.generarTokens());
+                tokensJS.addAll(automata.generarTokens());
             }else{
                 System.out.println("Error");
             }

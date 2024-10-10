@@ -5,6 +5,7 @@
 package com.mycompany.analizadoreslexicos.frontend;
 
 import com.mycompany.analizadoreslexicos.Lexer;
+import com.mycompany.analizadoreslexicos.backend.GeneradorHTML;
 import com.mycompany.analizadoreslexicos.backend.Token;
 import java.io.File;
 import java.nio.file.Files;
@@ -18,6 +19,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author mynordma
  */
 public class FramePrincipal extends javax.swing.JFrame {
+    
+    private ArrayList<Token> tokensHTML;
+    private ArrayList<Token> tokensCSS;
+    private ArrayList<Token> tokensJS;
 
     /**
      * Creates new form FramePrincipal
@@ -40,10 +45,11 @@ public class FramePrincipal extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         ejecutarBtn = new javax.swing.JButton();
+        mensajeLabel = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         archivoBtn = new javax.swing.JMenu();
-        jMenu3 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
+        reporteBtn = new javax.swing.JMenu();
+        generarHTMLBtn = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -58,6 +64,8 @@ public class FramePrincipal extends javax.swing.JFrame {
             }
         });
 
+        mensajeLabel.setText("---");
+
         archivoBtn.setText("Cargar archivo");
         archivoBtn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -66,11 +74,21 @@ public class FramePrincipal extends javax.swing.JFrame {
         });
         jMenuBar1.add(archivoBtn);
 
-        jMenu3.setText("jMenu3");
-        jMenuBar1.add(jMenu3);
+        reporteBtn.setText("Reporte de tokens");
+        reporteBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                reporteBtnMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(reporteBtn);
 
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
+        generarHTMLBtn.setText("Generar HTML");
+        generarHTMLBtn.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                generarHTMLBtnMouseClicked(evt);
+            }
+        });
+        jMenuBar1.add(generarHTMLBtn);
 
         setJMenuBar(jMenuBar1);
 
@@ -80,12 +98,14 @@ public class FramePrincipal extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(mensajeLabel)
+                        .addGap(309, 309, 309)
+                        .addComponent(ejecutarBtn)
+                        .addGap(0, 389, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addGap(356, 356, 356)
-                .addComponent(ejecutarBtn)
-                .addContainerGap(366, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -93,7 +113,9 @@ public class FramePrincipal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 472, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(ejecutarBtn)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ejecutarBtn)
+                    .addComponent(mensajeLabel))
                 .addContainerGap(57, Short.MAX_VALUE))
         );
 
@@ -127,12 +149,74 @@ public class FramePrincipal extends javax.swing.JFrame {
     private void ejecutarBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ejecutarBtnActionPerformed
         Lexer lexer = new Lexer(jTextArea1.getText());
         lexer.generarTokens();
-        ArrayList<Token> tokensHTML = lexer.getTokensHTML();
-        ArrayList<Token> tokensCSS = lexer.getTokensCSS();
-        ArrayList<Token> tokensJS = lexer.getTokensJS();
+        tokensHTML = lexer.getTokensHTML();
+        tokensCSS = lexer.getTokensCSS();
+        tokensJS = lexer.getTokensJS();
       
         imprimirTokens(tokensHTML, tokensCSS, tokensJS);
     }//GEN-LAST:event_ejecutarBtnActionPerformed
+
+    private void reporteBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_reporteBtnMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_reporteBtnMouseClicked
+
+    private void generarHTMLBtnMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_generarHTMLBtnMouseClicked
+        String parte1 = """
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Document</title>
+                        <style>""";
+        
+        String parte2 = """
+                        </style>
+                        <script>""";
+        
+        String parte3 = """
+                        </script>
+                        </head>
+                        <body>""";
+        
+        String parte4 = """
+                        </body>
+                        </html>""";
+        
+        StringBuilder html = new StringBuilder();
+        StringBuilder css = new StringBuilder();
+        StringBuilder js= new StringBuilder();
+        StringBuilder codigo = new StringBuilder();
+        
+        for (Token token : tokensHTML) {
+            if(token.getValor().equals("PALABRA_RESERVADA")){
+               html.append(" "); 
+            }
+            
+            html.append(token.getTraduccion());
+        }
+        for (Token token : tokensCSS) {
+            css.append(" ");
+            css.append(token.getValor());
+        }
+        for (Token token : tokensJS) {
+            js.append(" ");
+            js.append(token.getValor());
+        }
+        
+        codigo.append(parte1);
+        codigo.append(css);
+        codigo.append(parte2);
+        codigo.append(js);
+        codigo.append(parte3);
+        codigo.append(html);
+        codigo.append(parte4);
+        
+        GeneradorHTML generador = new GeneradorHTML();
+        generador.generarHTML(codigo.toString(), "index.html");
+        generador.abrirHTML("index.html");
+        
+    }//GEN-LAST:event_generarHTMLBtnMouseClicked
 
     private void imprimirTokens(ArrayList<Token> tokensHTML, ArrayList<Token> tokensCSS, ArrayList<Token> tokensJS){
         for (int i = 0; i < tokensHTML.size(); i++) {
@@ -149,10 +233,11 @@ public class FramePrincipal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu archivoBtn;
     private javax.swing.JButton ejecutarBtn;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu generarHTMLBtn;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JLabel mensajeLabel;
+    private javax.swing.JMenu reporteBtn;
     // End of variables declaration//GEN-END:variables
 }

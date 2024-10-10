@@ -19,7 +19,9 @@ public class AutomataJS extends Automata {
 
     @Override
     public ArrayList<Token> generarTokens() {
-        return null;
+        ArrayList<Token> tokens = new ArrayList<>();
+        tokens.add(new Token("PRUEBAJS", "Prueba", ""));
+        return tokens;
     }
 
     

@@ -11,10 +11,12 @@ package com.mycompany.analizadoreslexicos.backend;
 public class Token {
     private String tipo;
     private String valor;
+    private String traduccion;
 
-    public Token(String tipo, String valor) {
+    public Token(String tipo, String valor, String traduccion) {
         this.tipo = tipo;
         this.valor = valor;
+        this.traduccion = traduccion;
     }
 
     public String getTipo() {
@@ -36,6 +38,10 @@ public class Token {
     @Override
     public String toString() {
         return "Token{" + "tipo=" + tipo + ", valor='" + valor + '}';
+    }
+
+    public String getTraduccion() {
+        return traduccion;
     }
     
 }
